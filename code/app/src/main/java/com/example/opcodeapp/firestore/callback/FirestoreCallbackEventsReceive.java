@@ -1,4 +1,6 @@
-package com.example.opcodeapp;
+package com.example.opcodeapp.firestore.callback;
+
+import com.example.opcodeapp.model.Event;
 
 import java.util.List;
 
