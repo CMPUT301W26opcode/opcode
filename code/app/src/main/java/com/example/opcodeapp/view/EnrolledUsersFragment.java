@@ -1,31 +1,30 @@
-package com.example.opcodeapp;
+package com.example.opcodeapp.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.opcodeapp.R;
+import com.example.opcodeapp.UserArrayAdapter;
 import com.example.opcodeapp.databinding.FragmentEnrolledUsersBinding;
+import com.example.opcodeapp.model.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
+import java.util.List;
 
 public class EnrolledUsersFragment extends Fragment {
 
     /**
      * The list of users to be displayed.
      */
-    private ArrayList<User> dataList;
+    private List<User> dataList;
 
     /**
      * The ListView for the list of users.
@@ -47,8 +46,7 @@ public class EnrolledUsersFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View fragmentUserView = inflater.inflate(R.layout.fragment_enrolled_users, container, false);
-        return fragmentUserView;
+        return inflater.inflate(R.layout.fragment_enrolled_users, container, false);
     }
 
 
@@ -56,7 +54,7 @@ public class EnrolledUsersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         User[] receivedArray = EnrolledUsersFragmentArgs.fromBundle(getArguments()).getUserList();
 
-        dataList = new ArrayList<>(Arrays.asList(receivedArray));
+        dataList = new ArrayList<User>(Arrays.asList(receivedArray));
 
         userList = view.getRootView().findViewById(R.id.enrolled_users_list_view);
 

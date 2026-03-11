@@ -3,19 +3,16 @@ package com.example.opcodeapp;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.opcodeapp.model.Event;
+import com.example.opcodeapp.model.User;
 
-
-
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class EventTest {
 
     private Event mockEvent() {
-        User organizer = new User("mock_organizer", "mock_organizer@ualberta.ca", "676767676");
-        return new Event("Oscars", "California", "Film festival and presentation of awards", LocalDate.of(2026, 3, 15), LocalDateTime.now(), LocalDate.of(2026, 3, 15), LocalDateTime.of(2026, 3, 14, 16, 0), organizer);
-
+        User organizer = MockUtil.mockUser(0);
+        
     }
 
 

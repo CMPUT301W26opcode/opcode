@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.opcodeapp"
-        minSdk = 24
+        minSdk = 36
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -49,21 +49,17 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.firebase.auth)
+    implementation(libs.zxing)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("androidx.annotation:annotation:1.6.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.0.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
-
     implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
-
-
     testImplementation("junit:junit:4.13.2")
-
     testImplementation("org.mockito:mockito-core:5.3.1")
-
     testImplementation("org.mockito:mockito-inline:5.2.0")
 }
