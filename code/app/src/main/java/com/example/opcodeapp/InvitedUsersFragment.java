@@ -132,7 +132,10 @@ public class InvitedUsersFragment extends Fragment implements DeclinedUserDialog
 
         FirebaseFirestore DB = FirebaseFirestore.getInstance();
         DBManager dbmanager = new DBManager(DB);
-        event.setDeclinedRemoved(user);
+
+        List<User> userList = new ArrayList<>();
+        userList.add(user);
+        event.setDeclinedRemoved(userList);
         dbmanager.updateEvent(event, new FirestoreCallbackSend() {
             @Override
             public void onSendSuccess() {

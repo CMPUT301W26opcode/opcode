@@ -464,10 +464,13 @@ public class Event implements Parcelable {
     /**
      * If the user declined the invite, this method lets the organizer remove the user from the screen.
      *
-     * @param user
+     * @param users
      */
-    public void setDeclinedRemoved(User user) {
-        applicants.replace(user, "Declined-Removed");
+    public void setDeclinedRemoved(List<User> users) {
+        for (User u : users) {
+            applicants.replace(u, "Declined-Removed");
+        }
+
     }
 
 
