@@ -12,18 +12,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.time.LocalDateTime;
+
+
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.opcodeapp.DBManager;
-import com.example.opcodeapp.FirestoreCallbackSend;
-import com.example.opcodeapp.LotterySystem;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -56,9 +54,12 @@ public class WaitListFragment extends Fragment {
         dbManager = new DBManager(FirebaseFirestore.getInstance());
         lotterySystem = new LotterySystem();
 
+
+        currentUser = SessionController.getInstance(getContext()).getCurrentUser();
+
         if (getArguments() != null) {
-            currentEvent = (Event) getArguments().getSerializable("EVENT");
-            currentUser = (User) getArguments().getSerializable("CURRENT_USER");
+            currentEvent = (Event) getArguments().getParcelable("event");
+
         }
 
         // Setup UI References
@@ -71,7 +72,7 @@ public class WaitListFragment extends Fragment {
         header.setText(currentEvent.getName() + " Waitlist");
 
         // Initialize List and Adapter
-        List<User> applicants = currentEvent.getApplicants();
+        List<User> applicants = currentEvent.getInitialApplicants();
         if (applicants == null)
             applicantDataList = new ArrayList<>();
         else
@@ -83,6 +84,10 @@ public class WaitListFragment extends Fragment {
         // Responsibility:  only Organizers can see lottery controls
         if (!currentUser.getId().equals(currentEvent.getOrganizer().getId())) {
             lotteryControls.setVisibility(View.GONE);
+        }
+
+        if (LocalDateTime.now().isBefore(currentEvent.getRegistrationEnd())) {
+            lotteryControls.setVisibility(View.GONE); //YOU WERE HERE
         }
 
         // Setup Lottery Draw Listener
