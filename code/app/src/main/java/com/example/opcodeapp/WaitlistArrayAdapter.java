@@ -16,9 +16,9 @@ import java.util.ArrayList;
 /**
  * The ArrayAdapter for the list of users who applied to an event.
  */
-public class ApplicantArrayAdapter extends ArrayAdapter<User> {
+public class WaitlistArrayAdapter extends ArrayAdapter<User> {
 
-    public ApplicantArrayAdapter(Context context, ArrayList<User> users) {
+    public WaitlistArrayAdapter(Context context, ArrayList<User> users) {
         super(context, 0, users);
     }
 
@@ -38,6 +38,7 @@ public class ApplicantArrayAdapter extends ArrayAdapter<User> {
         TextView userEmail = view.findViewById(R.id.user_email_text);
         userName.setText(user.getName());
         userEmail.setText(user.getEmail());
+
 
         return view;
     }

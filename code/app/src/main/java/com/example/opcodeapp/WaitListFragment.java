@@ -78,7 +78,7 @@ public class WaitListFragment extends Fragment {
         else
             applicantDataList = new ArrayList<>(applicants);
 
-        adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, applicantDataList);
+        adapter = new WaitlistArrayAdapter(requireContext(), applicantDataList);
         waitlistListView.setAdapter(adapter);
 
         // Responsibility:  only Organizers can see lottery controls
