@@ -20,8 +20,7 @@ import androidx.navigation.Navigation;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -53,8 +52,11 @@ public class EntrantEventDetailsFragment extends Fragment {
         // 1. Extract the Event and User passed from the previous screen
         if (getArguments() != null) {
             currentEvent = (Event) getArguments().getParcelable("event");
-            currentUser = (User) getArguments().getSerializable("user");
+
         }
+
+        currentUser = SessionController.getInstance(getContext()).getCurrentUser();
+
 
         // Safety check to prevent crashes
         if (currentEvent == null) {
@@ -76,8 +78,8 @@ public class EntrantEventDetailsFragment extends Fragment {
 
         // US 01.05.04: Show Waitlist Count
         int count = 0;
-        if (currentEvent.getApplicants() != null) {
-            count = currentEvent.getApplicants().size();
+        if (currentEvent.getInitialApplicants() != null) {
+            count = currentEvent.getInitialApplicants().size();
         }
         tvWaitlistCount.setText(count + " people on waitlist");
 
@@ -103,7 +105,7 @@ public class EntrantEventDetailsFragment extends Fragment {
     }
     private void joinEventWaitlist(View view) {
         // Add user to local event object
-        List<User> currentApplicants = currentEvent.getApplicants();
+        List<User> currentApplicants = currentEvent.getInitialApplicants();
         if (currentApplicants != null) {
             for (User u : currentApplicants) {
                 if (u.getId().equals(currentUser.getId())) {
@@ -115,10 +117,15 @@ public class EntrantEventDetailsFragment extends Fragment {
 
 
             //new code added by Vedant to check if a waitlist is full.
-            int total_applicants = currentEvent.getApplicants().size() + currentEvent.getAttendees().size() + currentEvent.getInvited().size() + currentEvent.getDeclined().size() + currentEvent.getDeclinedRemoved().size();
+            int total_applicants = currentEvent.getInitialApplicants().size() + currentEvent.getAttendees().size() + currentEvent.getInvited().size() + currentEvent.getDeclined().size() + currentEvent.getDeclinedRemoved().size();
 
-            if ( total_applicants >= currentEvent.getWaitlistLimit()) {
+            if (currentEvent.getWaitlistLimit() != -1 && total_applicants >= currentEvent.getWaitlistLimit()) {
                 Toast.makeText(requireContext(), "Waitlist is full!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (LocalDateTime.now().isAfter(currentEvent.getRegistrationEnd())) {
+                Toast.makeText(requireContext(), "Registration is closed!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -142,9 +149,7 @@ public class EntrantEventDetailsFragment extends Fragment {
     }
 
     private void navigateNext(View view) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("EVENT", (Serializable) currentEvent);
-        bundle.putSerializable("CURRENT_USER", (Serializable) currentUser);
-        Navigation.findNavController(view).navigate(R.id.action_EntrantEventDetails_to_WaitList, bundle);
+
+        Navigation.findNavController(view).navigate(R.id.eventsFragment);
     }
 }
