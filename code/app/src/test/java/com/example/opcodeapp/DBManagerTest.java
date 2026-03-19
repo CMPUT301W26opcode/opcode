@@ -34,6 +34,9 @@ public class DBManagerTest {
     @Mock private Task<Void> mockTask;
     @Mock private FirestoreCallbackSend mockListener;
 
+    @Mock private Context mockContext;
+
+
     private DBManager dbManager;
 
     @Before
@@ -53,13 +56,17 @@ public class DBManagerTest {
         // 4. Mock the .set(user) call to return a task
         when(mockDocRef.set(any(User.class))).thenReturn(mockTask);
 
+        when(mockContext.getContentResolver()).thenReturn(mock(android.content.ContentResolver.class));
+
+
         dbManager = new DBManager(mockDb);
     }
 
     @Test
     public void testAddUser() {
 
-        User user = new User("Vedant Patel", "vspatel1@ualberta.ca", "67676767");
+
+        User user = new User("Vedant Patel", "vspatel1@ualberta.ca", "67676767", mockContext);
 
         // 5. Tell the mockTask to trigger the Success Listener immediately
         when(mockTask.addOnSuccessListener(any())).thenAnswer(invocation -> {
@@ -82,7 +89,10 @@ public class DBManagerTest {
 
     @Test
     public void testUpdateUser() {
-        User newUser = new User("John Doe", "blah@gmail.com", "98372042");
+        User newUser = new User("John Doe", "blah@gmail.com", "98372042", mockContext);
+        newUser.setId("mock_id_123");
+
+
     }
 
 }

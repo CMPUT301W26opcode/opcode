@@ -2,9 +2,12 @@ package com.example.opcodeapp;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import android.content.Context;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,6 +32,10 @@ public class EventCreationTest {
     @Mock private Task<Void> mockTask;
     @Mock private FirestoreCallbackSend mockListener;
 
+    @Mock
+    private Context mockContext;
+
+
     private DBManager dbManager;
     private User organizer;
     private Event event;
@@ -37,21 +44,26 @@ public class EventCreationTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        organizer = new User("Jane Organizer", "jane@ualberta.ca", "7801234567");
+
+
+
+        organizer = new User("Jane Organizer", "jane@ualberta.ca", "7801234567", mockContext);
         organizer.setId("organizer_id_001");
 
         event = new Event(
                 "Trivia Night", "Library", "",
-                LocalDate.of(2026, 12, 25), LocalDateTime.now(),
-                LocalDate.of(2026, 12, 25), LocalDateTime.of(2026, 12, 20, 0, 0),
-                organizer, 0f
-        );
+                LocalDateTime.of(2026, 12, 25, 0, 0), LocalDateTime.now(),
+                LocalDateTime.of(2026, 12, 25, 0, 0), LocalDateTime.of(2026, 12, 20, 0, 0),
+                organizer, 0, 50);
+
 
         when(mockDb.collection("Events")).thenReturn(mockCollection);
         when(mockCollection.document()).thenReturn(mockDocRef);
         when(mockDocRef.getId()).thenReturn("generated_event_id");
         when(mockDocRef.set(any(Event.class))).thenReturn(mockTask);
         when(mockTask.addOnFailureListener(any())).thenReturn(mockTask);
+
+        when(mockContext.getContentResolver()).thenReturn(mock(android.content.ContentResolver.class));
 
         dbManager = new DBManager(mockDb);
     }
@@ -70,7 +82,7 @@ public class EventCreationTest {
 
     @Test
     public void testConstructor_storesStartDate() {
-        assertEquals(LocalDate.of(2026, 12, 25), event.getStartDate());
+        assertEquals(LocalDate.of(2026, 12, 25), event.getStart().toLocalDate());
     }
 
     @Test
