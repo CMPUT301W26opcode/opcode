@@ -84,7 +84,14 @@ public class InvitedUsersFragment extends Fragment implements DeclinedUserDialog
         });
 
         Button message_button = view.findViewById(R.id.accepted_msg_send_btn);
-        message_button.setOnClickListener(this::sendMessages);
+        message_button.setOnClickListener(v -> {
+            sendMessages(v, ApplicantStatus.ACCEPTED, R.id.accepted_msg_input);
+        });
+
+        Button decline_button = view.findViewById(R.id.declined_msg_send_btn);
+        decline_button.setOnClickListener(v -> {
+            sendMessages(v, ApplicantStatus.DECLINED, R.id.declined_msg_input);
+        });
 
         /**
          * Click Listener for each of the users in the listview. If the user has declined the invitation, they can be removed from the list.
@@ -129,26 +136,26 @@ public class InvitedUsersFragment extends Fragment implements DeclinedUserDialog
         userAdapter.notifyDataSetChanged();
     }
 
-    private void sendMessages(View v) {
+    private void sendMessages(View v, ApplicantStatus status, int input) {
         NotificationRepository repo = new NotificationRepository(FirebaseFirestore.getInstance());
         ApplicantRepository repository = new ApplicantRepository(FirebaseFirestore.getInstance());
-        repository.fetchApplicantsByStatus(event, ApplicantStatus.ACCEPTED, new FirestoreCallbackApplicantsReceive() {
+        repository.fetchApplicantsByStatus(event, status, new FirestoreCallbackApplicantsReceive() {
             @Override
             public void onDataReceived(List<Applicant> applicants) {
-                EditText text = getView().findViewById(R.id.accepted_msg_input);
+                EditText text = getView().findViewById(input);
                 String message = text.getText().toString();
-                Log.d("NotificationAcceptedMessage", "Sending message: " + message);
+                Log.d("NotificationMessage", "Sending message: " + message);
                 applicants.forEach(applicant -> {
                     repo.addNotification(
                             new Notification(applicant.getUserId(), message, event.getId(), "event_detail"), new FirestoreCallbackSend() {
                                 @Override
                                 public void onSendSuccess(Void unused) {
-                                    Log.i("NotificationAcceptedMessage", "notification message sent");
+                                    Log.i("NotificationMessage", "notification message sent " + status);
                                 }
 
                                 @Override
                                 public void onSendFailure(Exception e) {
-                                    Log.i("NotificationAcceptedMessage", "notification couldn't be sent", e);
+                                    Log.i("NotificationMessage", "notification couldn't be sent " + status, e);
                                 }
                             }
                     );
@@ -157,7 +164,7 @@ public class InvitedUsersFragment extends Fragment implements DeclinedUserDialog
 
             @Override
             public void onError(Exception e) {
-                Log.e("NotificationAcceptedMessage", "can't send notification to accepted", e);
+                Log.e("NotificationMessage", "can't send notification to " + status, e);
             }
         });
     }

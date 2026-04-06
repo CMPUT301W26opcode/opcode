@@ -8,7 +8,8 @@
     <ListView
         android:id="@+id/invited_users_list_view"
         android:layout_width="403dp"
-        android:layout_height="583dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
     <LinearLayout
         android:id="@+id/message_controls"
@@ -17,6 +18,20 @@
         android:orientation="vertical"
         android:padding="12dp"
         android:background="#EEEEEE">
+
+        <EditText
+            android:id="@+id/declined_msg_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Message to declined users" />
+
+        <Button
+            android:id="@+id/declined_msg_send_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Send message"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF" />
 
         <EditText
             android:id="@+id/accepted_msg_input"
