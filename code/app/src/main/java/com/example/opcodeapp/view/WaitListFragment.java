@@ -85,6 +85,9 @@ public class WaitListFragment extends Fragment {
         Button drawButton = view.findViewById(R.id.btn_draw_lottery);
         TextView header = view.findViewById(R.id.event_header);
 
+        Button msgButton = view.findViewById(R.id.waitlist_msg_send_btn);
+        msgButton.setOnClickListener(this::sendMessages);
+
         header.setText(event.getName() + " Waitlist");
 
         // Initialize and attach adapter
@@ -164,13 +167,43 @@ public class WaitListFragment extends Fragment {
                         }
                     }
             );
-
-
-            // Responsibility: randomly select entrants
-
         } catch (NumberFormatException e) {
             Toast.makeText(requireContext(), "Could not parse number", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void sendMessages(View v) {
+        ApplicantRepository repository = new ApplicantRepository(FirebaseFirestore.getInstance());
+        repository.fetchApplicantsByStatus(event, ApplicantStatus.NOT_DRAWN, new FirestoreCallbackApplicantsReceive() {
+            @Override
+            public void onDataReceived(List<Applicant> applicants) {
+                EditText text = getView().findViewById(R.id.waitlist_msg_input);
+                String message = text.getText().toString();
+                Log.d("NotificationWaitlistMessage", "Sending message: " + message);
+                applicants.forEach(applicant -> {
+                    notificationRepository.addNotification(
+                            new Notification(applicant.getUserId(), message, event.getId(), "event_detail"), new FirestoreCallbackSend() {
+                                @Override
+                                public void onSendSuccess(Void unused) {
+                                    Toast.makeText(getContext(), "Message sent!", Toast.LENGTH_SHORT).show();
+                                    Log.i("NotificationWaitlistMessage", "notification message sent");
+                                }
+
+                                @Override
+                                public void onSendFailure(Exception e) {
+                                    Toast.makeText(getContext(), "Error sending", Toast.LENGTH_SHORT).show();
+                                    Log.i("NotificationWaitlistMessage", "notification couldn't be created for winner", e);
+                                }
+                            }
+                    );
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("NotificationWaitList", "can't send notification to waitlist");
+            }
+        });
     }
 
     private void processLosers(List<Applicant> losers) {

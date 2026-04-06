@@ -20,6 +20,8 @@
         android:layout_weight="1"
         android:layout_marginTop="16dp" />
 
+
+
     <LinearLayout
         android:id="@+id/lottery_controls"
         android:layout_width="match_parent"
@@ -27,6 +29,20 @@
         android:orientation="vertical"
         android:padding="12dp"
         android:background="#EEEEEE">
+
+        <EditText
+            android:id="@+id/waitlist_msg_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Message to waitlist" />
+
+        <Button
+            android:id="@+id/waitlist_msg_send_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Send message"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF" />
 
         <EditText
             android:id="@+id/num_to_draw_input"
