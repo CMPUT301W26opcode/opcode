@@ -1,10 +1,13 @@
 package com.example.opcodeapp.view;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -19,7 +22,9 @@ import com.example.opcodeapp.databinding.FragmentInvitedUsersBinding;
 import com.example.opcodeapp.enums.ApplicantStatus;
 import com.example.opcodeapp.model.Applicant;
 import com.example.opcodeapp.model.Event;
+import com.example.opcodeapp.model.Notification;
 import com.example.opcodeapp.repository.ApplicantRepository;
+import com.example.opcodeapp.repository.NotificationRepository;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -46,6 +51,7 @@ public class InvitedUsersFragment extends Fragment implements DeclinedUserDialog
      */
     private ArrayAdapter<Applicant> userAdapter;
     private ApplicantRepository applicantRepository;
+    private Event event;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +60,7 @@ public class InvitedUsersFragment extends Fragment implements DeclinedUserDialog
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Event event = getArguments().getParcelable("event", Event.class);
+        event = getArguments().getParcelable("event", Event.class);
         applicantRepository = new ApplicantRepository(FirebaseFirestore.getInstance());
         userList = view.findViewById(R.id.invited_users_list_view);
 
@@ -76,6 +82,9 @@ public class InvitedUsersFragment extends Fragment implements DeclinedUserDialog
                 Toast.makeText(getContext(), "Error fetching applicants", Toast.LENGTH_SHORT).show();
             }
         });
+
+        Button message_button = view.findViewById(R.id.accepted_msg_send_btn);
+        message_button.setOnClickListener(this::sendMessages);
 
         /**
          * Click Listener for each of the users in the listview. If the user has declined the invitation, they can be removed from the list.
@@ -118,5 +127,38 @@ public class InvitedUsersFragment extends Fragment implements DeclinedUserDialog
 
         dataList.remove(applicant);
         userAdapter.notifyDataSetChanged();
+    }
+
+    private void sendMessages(View v) {
+        NotificationRepository repo = new NotificationRepository(FirebaseFirestore.getInstance());
+        ApplicantRepository repository = new ApplicantRepository(FirebaseFirestore.getInstance());
+        repository.fetchApplicantsByStatus(event, ApplicantStatus.ACCEPTED, new FirestoreCallbackApplicantsReceive() {
+            @Override
+            public void onDataReceived(List<Applicant> applicants) {
+                EditText text = getView().findViewById(R.id.accepted_msg_input);
+                String message = text.getText().toString();
+                Log.d("NotificationAcceptedMessage", "Sending message: " + message);
+                applicants.forEach(applicant -> {
+                    repo.addNotification(
+                            new Notification(applicant.getUserId(), message, event.getId(), "event_detail"), new FirestoreCallbackSend() {
+                                @Override
+                                public void onSendSuccess(Void unused) {
+                                    Log.i("NotificationAcceptedMessage", "notification message sent");
+                                }
+
+                                @Override
+                                public void onSendFailure(Exception e) {
+                                    Log.i("NotificationAcceptedMessage", "notification couldn't be sent", e);
+                                }
+                            }
+                    );
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("NotificationAcceptedMessage", "can't send notification to accepted", e);
+            }
+        });
     }
 }

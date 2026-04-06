@@ -185,14 +185,12 @@ public class WaitListFragment extends Fragment {
                             new Notification(applicant.getUserId(), message, event.getId(), "event_detail"), new FirestoreCallbackSend() {
                                 @Override
                                 public void onSendSuccess(Void unused) {
-                                    Toast.makeText(getContext(), "Message sent!", Toast.LENGTH_SHORT).show();
                                     Log.i("NotificationWaitlistMessage", "notification message sent");
                                 }
 
                                 @Override
                                 public void onSendFailure(Exception e) {
-                                    Toast.makeText(getContext(), "Error sending", Toast.LENGTH_SHORT).show();
-                                    Log.i("NotificationWaitlistMessage", "notification couldn't be created for winner", e);
+                                    Log.i("NotificationWaitlistMessage", "notification couldn't be sent", e);
                                 }
                             }
                     );
@@ -201,7 +199,7 @@ public class WaitListFragment extends Fragment {
 
             @Override
             public void onError(Exception e) {
-                Log.e("NotificationWaitList", "can't send notification to waitlist");
+                Log.e("NotificationWaitlistMessage", "can't send notification to waitlist", e);
             }
         });
     }
