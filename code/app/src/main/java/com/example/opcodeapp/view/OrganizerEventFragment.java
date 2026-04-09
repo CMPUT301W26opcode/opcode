@@ -211,7 +211,7 @@ public class OrganizerEventFragment extends Fragment {
                 QrCodeViewerFragment.newInstance(event.getId())
                         .show(getParentFragmentManager(), "qr_code_view"));
 
-        qrCodeButton.setVisibility(user.isAdmin() ? View.VISIBLE : View.GONE);
+        qrCodeButton.setVisibility(event.isPublic() ? View.VISIBLE : View.GONE);
     }
 
     /**
