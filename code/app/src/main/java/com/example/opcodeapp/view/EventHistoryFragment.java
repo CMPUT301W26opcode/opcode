@@ -116,7 +116,13 @@ public class EventHistoryFragment extends Fragment {
             @Override
             public void onDataReceived(Event event) {
                 String statusName = applicant.getStatus().name();
-                String output = String.format("%s - Status: %s", event.getName(), statusName);
+                String output;
+                if (event != null && event.getName() != null) {
+                    output = String.format("%s - Status: %s", event.getName(), statusName);
+                }
+                else{
+                    output = String.format("Unknown Event (%s) - Status: %s", applicant.getEventId(), statusName);
+                }
                 displayList.add(output);
                 adapter.notifyDataSetChanged();
             }
