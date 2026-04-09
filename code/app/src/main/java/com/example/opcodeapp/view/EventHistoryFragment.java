@@ -92,7 +92,8 @@ public class EventHistoryFragment extends Fragment {
                         }
 
                         for (Applicant applicant : applicants) {
-                            fetchEventDetailsForApplicant(applicant);
+                            if (applicant != null)
+                                fetchEventDetailsForApplicant(applicant);
                         }
                     }
 
@@ -117,12 +118,10 @@ public class EventHistoryFragment extends Fragment {
             public void onDataReceived(Event event) {
                 String statusName = applicant.getStatus().name();
                 String output;
-                if (event != null && event.getName() != null) {
-                    output = String.format("%s - Status: %s", event.getName(), statusName);
-                }
-                else{
-                    output = String.format("Unknown Event (%s) - Status: %s", applicant.getEventId(), statusName);
-                }
+                if (event == null)
+                    return;
+
+                output = String.format("%s - Status: %s", event.getName(), statusName);
                 displayList.add(output);
                 adapter.notifyDataSetChanged();
             }
