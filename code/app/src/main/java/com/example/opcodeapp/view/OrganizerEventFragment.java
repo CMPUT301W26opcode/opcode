@@ -124,6 +124,7 @@ public class OrganizerEventFragment extends Fragment {
                 @Override
                 public void onDataReceived(List<Applicant> applicants) {
                     allApplicants.addAll(applicants);
+                    waitListText.setText("Waitlist: " + allApplicants.size() + "/" + total);
                 }
 
 
@@ -138,7 +139,6 @@ public class OrganizerEventFragment extends Fragment {
                     Toast.makeText(getContext(), "Error fetching applicants", Toast.LENGTH_SHORT).show();
                 }
             });
-            waitListText.setText("Waitlist: " + allApplicants.size() + "/" + total);
         } else {
             waitListText.setText("Waitlist Limit: None");
         }
